@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import pickle
 from pathlib import Path
 
@@ -28,11 +29,16 @@ def score_if_available(df: pd.DataFrame) -> None:
 
     y_true = df[TARGET_COL]
     y_pred = df["Predicted_Daily_Return"]
+    metrics = {
+        "mae": float(mean_absolute_error(y_true, y_pred)),
+        "rmse": float(np.sqrt(mean_squared_error(y_true, y_pred))),
+        "r2": float(r2_score(y_true, y_pred)),
+        "directional_accuracy": float((np.sign(y_true) == np.sign(y_pred)).mean()),
+    }
     print("2025 metrics:")
-    print(f"  mae: {mean_absolute_error(y_true, y_pred):.6f}")
-    print(f"  rmse: {np.sqrt(mean_squared_error(y_true, y_pred)):.6f}")
-    print(f"  r2: {r2_score(y_true, y_pred):.6f}")
-    print(f"  directional_accuracy: {(np.sign(y_true) == np.sign(y_pred)).mean():.6f}")
+    for k, v in metrics.items():
+        print(f"  {k}: {v:.6f}")
+    return metrics
 
 
 def load_feature_data(
@@ -88,8 +94,14 @@ def run_inference(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     output_df.to_csv(out_path, index=False)
 
+    metrics = score_if_available(output_df)
+
+    metrics_path = out_path.with_suffix(".metrics.json")
+    with metrics_path.open("w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=2, default=str)
+
     print(f"Saved {len(output_df)} predictions to {out_path}")
-    score_if_available(output_df)
+    print(f"Saved metrics to {metrics_path}")
     return out_path
 
 
