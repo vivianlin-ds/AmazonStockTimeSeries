@@ -1,0 +1,26 @@
+{
+  "model": "RandomForestRegressor(max_depth=8, min_samples_leaf=4, n_estimators=400,\n                      n_jobs=-1, random_state=42)",
+  "feature_columns": [
+    "MA_7",
+    "MA_30",
+    "MA_90",
+    "Volatility_7D",
+    "Close_t-1",
+    "Close_t-2",
+    "Close_t-5",
+    "Daily_Return_t-1",
+    "Daily_Return_t-2",
+    "Daily_Return_t-5",
+    "Volume_t-1"
+  ],
+  "target_column": "Daily_Return",
+  "train_start_date": "2000-01-01",
+  "data_path": "data/AAPL_Stock_Price_Dataset.csv",
+  "features_path": "artifacts/aapl_features.csv",
+  "validation_metrics": {
+    "mae": 1.0318113429802644,
+    "rmse": 1.423188659382654,
+    "r2": 0.0037944570485886064,
+    "directional_accuracy": 0.5714285714285714
+  }
+}
